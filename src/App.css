@@ -1,41 +1,23 @@
-{
+*{
   box-sizing:border-box;
-}
-
-body{
-  background-color: #f1f1f1;
-  padding: 30px 20px
+  text-decoration:none;
   
 }
-
-
-.loader {
-  border: 4px solid rgba(0, 0, 0, .1);
-  border-left-color: transparent;
-  border-radius: 50%;
+.app{
+  background-color: #fff;
+  padding: 30px 50px 50px 50px;
 }
-
-.loader {
-  border: 4px solid rgba(0, 0, 0, .1);
-  border-left-color: transparent;
-  width: 36px;
-  height: 36px;
+.navBar{
+  background-color:#ffffff;
+  padding:20px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  border-bottom:.5px solid #d6d6d6;
+  
 }
-
-.loader {
-  border: 4px solid rgba(0, 0, 0, .1);
-  border-left-color: transparent;
-  width: 36px;
-  height: 36px;
-  animation: spin89345 1s linear infinite;
+.navBar img{
+  cursor:pointer;
+  margin-left:30px
 }
-
-@keyframes spin89345 {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+.addIcon{
+  margin-top:-15px;
 }

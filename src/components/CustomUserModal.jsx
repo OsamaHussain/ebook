@@ -3,19 +3,25 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { useReducer, useState, useEffect } from "react"
 import { reducer, removeEmptyValuesFromObject } from "./../utils/Global"
-const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, handleUpdate = () => { }, forEdit, forDelete, item, useDelete, collectionName = "" }) => {
+const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, handleUpdate = () => { }, forEdit, forDelete, item,useDeleteSignlePhoto = ()=>{} ,useDelete = () => { }, collectionName = "", useUploadPic = () => { } }) => {
 
+
+
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState({})
+  const [image, setImage] = useState(null)
+  const [downloadUrl, setDownlodUrl] = useState("")
+  const [logo, setLogo] = useState("https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/defaultImages%2Ffallback.jpg?alt=media&token=483a2d3c-92cf-4c7a-83ac-6cdc582428f9")
   const initialState = {
     displayName: "",
     phoneNumber: "",
     providerId: "",
     role: "",
+    photoURL: ""
   }
-
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [isDisabled, setIsDisabled] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
-  const [data, setData] = useState({})
+
   const handleInputChange = (e) => {
     return dispatch({
       field: e.target.name,
@@ -23,9 +29,10 @@ const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, h
     })
   }
   const handleFormatData = () => {
-    const formattedData = removeEmptyValuesFromObject({...state})
+    const formattedData = removeEmptyValuesFromObject({ ...state }, downloadUrl, "photoURL")
     setData(formattedData)
   }
+
   useEffect(() => {
     const { displayName, phoneNumber, providerId, role } = state
     if (displayName || phoneNumber || providerId || role) {
@@ -35,9 +42,28 @@ const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, h
     }
     handleFormatData()
   }, [state])
-  useEffect(()=>{
-    setIsLoading(false)
-  },[])
+
+  useEffect(() => {
+    if (image) {
+      console.log(image)
+      const allowedFormats = ["image/jpeg", "image/png", "image/jpg", "image/gif"]
+      if (!allowedFormats.includes(image.type)) {
+        alert("invalid format")
+      } else {
+        setLogo(URL.createObjectURL(image))
+        useUploadPic(image, `users/${image.name.split(".")[0]}`, setDownlodUrl, setIsLoading)
+      }
+    }
+  }, [image])
+
+  useEffect(() => {
+    if (downloadUrl) {
+      handleFormatData()
+      setIsDisabled(false)
+    }
+  }, [downloadUrl])
+
+
   return (
     <Modal
       show={show}
@@ -48,7 +74,7 @@ const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, h
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Delete {item["displayName"]} Permenently!
+          {forEdit && "Update" || forDelete && "Delete"} {item["displayName"]} Permenently!
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -56,7 +82,7 @@ const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, h
           <Button variant="dark" className="me-3" onClick={onHide}>Close</Button>
           <Button variant="danger" onClick={() => {
             handleDelete(item["displayName"]);
-            collectionName && useDelete(item?.id, collectionName)
+            collectionName && (useDelete(item?.id, collectionName), useDeleteSignlePhoto(item["photoURL"]))
             onHide()
           }}>Delete</Button>
         </div>}
@@ -97,16 +123,22 @@ const CustomUserModal = ({ onHide = () => { }, show, handleDelete = () => { }, h
                   </Form.Select>
                 </Form.Group>
               </Form>
+              <div>
+                <input name="file" onChange={(e) => { setImage(e.target.files[0]) }} className="d-none" type="file" id="fileInput" />
+                <label htmlFor="fileInput">
+                  <img style={{ borderRadius: "50%" }} src={logo} width="100" height="100" />
+                </label>
+              </div>
             </div>
             <div className="d-flex align-items-center justify-content-center">
               <Button variant="dark" className="me-3" onClick={onHide}>Close</Button>
               <Button variant="danger" disabled={isDisabled} onClick={() => {
-            setIsLoading(true)
-            setIsDisabled(true)
-            handleUpdate(item["id"], data)
-            setIsLoading(false)
-               !isLoading? onHide():""
-            console.log("state==>",state)
+                setIsLoading(true)
+                setIsDisabled(true)
+                handleUpdate(item["id"], data)
+                setIsLoading(false)
+                !isLoading ? onHide() : ""
+                console.log("state==>", state)
               }}>{isLoading ? "Updating..." : "Update"}</Button>
             </div>
           </div>

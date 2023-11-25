@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import CustomUserModal from './CustomUserModal';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { useGetData, useDelete, useUpdateDoc } from './../firebase/useFirebase'
+import { useGetData, useDelete, useUpdateDoc, useUploadPic, useDeleteSignlePhoto } from './../firebase/useFirebase'
 function CustomUserTable({ title }) {
   const tableHead = ["S. NO", "Profile", "Name", "Phone", "Provider", "Role", "Delete User", "Action"]
-  const logo = "https://rare-gallery.com/uploads/posts/864518-Men-Bark-of-tree-Smile-Glance-Trunk-tree-Sweater.jpg"
+  const logo = "https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/defaultImages%2Ffallback.jpg?alt=media&token=483a2d3c-92cf-4c7a-83ac-6cdc582428f9"
   const [user, setUser] = useState("")
   const [forDelete, setForDelete] = useState("")
   const [forEdit, setForEdit] = useState("")
@@ -16,7 +16,8 @@ function CustomUserTable({ title }) {
   const [filteredData, setFilteredData] = useState(users)
 
   const handleDelete = (name) => {
-    let data = filteredData.filter((x) => name != x.name)
+    console.log(filteredData)
+    let data = filteredData.filter((x) => name != x.displayName)
     setFilteredData(data)
   }
   const handleUpdate =async (id, data) => {
@@ -86,15 +87,19 @@ function CustomUserTable({ title }) {
 
         </tbody>
       </Table>
+
+
       <CustomUserModal
         show={modalShow}
         forEdit={forEdit}
         forDelete={forDelete}
-        item={user}
-        collectionName={"users"}
-        handleDelete={handleDelete}
-        handleUpdate={handleUpdate}
         useDelete={useDelete}
+        useDeleteSignlePhoto = {useDeleteSignlePhoto}
+        item={user}
+        handleDelete={handleDelete}
+        collectionName={"users"}
+        handleUpdate={handleUpdate}
+        useUploadPic = {useUploadPic}
         onHide={() => setModalShow(false)}
       />
     </>

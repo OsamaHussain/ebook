@@ -3,7 +3,7 @@ import { useReducer, useEffect, useState } from "react"
 import { reducer, roleFinder } from "./../../utils/Global"
 import { useUploadPic, useUploadDoc } from "./../../firebase/useFirebase"
 import Button from 'react-bootstrap/Button';
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 const AddUser = () => {
   const navigate = useNavigate()
   const initialState = {
@@ -17,16 +17,16 @@ const AddUser = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [isLoading, setIsLoading] = useState(false)
   const [image, setImage] = useState(null)
-  const [downloadUrl, setDownlodUrl] = useState("https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/users%2Ffallback.jpg?alt=media&token=78ada7d9-470f-4817-870b-9041454b0247")
-  const [logo, setLogo] = useState("https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/users%2Ffallback.jpg?alt=media&token=78ada7d9-470f-4817-870b-9041454b0247")
+  const [downloadUrl, setDownlodUrl] = useState("https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/defaultImages%2Ffallback.jpg?alt=media&token=483a2d3c-92cf-4c7a-83ac-6cdc582428f9")
+  const [logo, setLogo] = useState("https://firebasestorage.googleapis.com/v0/b/eshops-bbba3.appspot.com/o/defaultImages%2Ffallback.jpg?alt=media&token=483a2d3c-92cf-4c7a-83ac-6cdc582428f9")
   const handleInputChange = (e) => {
     return dispatch({
       field: e.target.name,
       payload: e.target.value
     })
   }
-  
-  const handleUpload = async() => {
+
+  const handleUpload = async () => {
     const { displayName, phoneNumber, providerId, role } = state
     if (displayName && phoneNumber && providerId && role && downloadUrl) {
       setIsLoading(true)
@@ -35,17 +35,16 @@ const AddUser = () => {
         phoneNumber,
         providerId,
         role: roleFinder(role),
-        photoURL:downloadUrl
+        photoURL: downloadUrl
       }
-     await useUploadDoc(data, "users")
+      await useUploadDoc(data, "users")
       setIsLoading(false)
       navigate("/")
-    }else{
+    } else {
       alert("Fill out all fields!")
     }
   }
   useEffect(() => {
-    console.log(state)
     if (image) {
       const allowedFormats = ["image/jpeg", "image/png", "image/jpg", "image/gif"]
       if (!allowedFormats.includes(image.type)) {
@@ -56,9 +55,9 @@ const AddUser = () => {
       }
     }
   }, [image])
-useEffect(()=>{
-  
-},[downloadUrl])
+  useEffect(() => {
+
+  }, [downloadUrl])
   return (
     <div>
       <div className="d-flex align-items-center justify-content-between mb-3">

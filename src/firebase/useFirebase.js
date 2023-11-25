@@ -1,5 +1,5 @@
-import { db, collection, onSnapshot, doc, setDoc,updateDoc ,  deleteDoc, storage, ref, uploadBytesResumable, getDownloadURL } from './firebaseConfig'
-
+import { db, collection, onSnapshot, doc, setDoc, updateDoc, deleteDoc, storage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from './firebaseConfig'
+import { isDeletable } from "./../utils/Global"
 
 const useGetData = (setData, collectionName) => {
 
@@ -46,7 +46,7 @@ const useUploadPic = async (file, loc, setDownlodUrl, setIsloading) => {
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-    setDownlodUrl(downloadURL), setIsloading(false)
+        setDownlodUrl(downloadURL), setIsloading(false)
       });
     }
   );
@@ -62,6 +62,21 @@ const useUpdateDoc = async (id, data, collectionName) => {
   console.log(res)
 }
 
+const useDeleteSignlePhoto = async (downloadUrl) => {
+  
+  if (!isDeletable(downloadUrl)){
+    try {
+      const photoRef = ref(storage, downloadUrl);
+      downloadUrl && await deleteObject(photoRef),
+      consoel.log("photo deleted")
+    } catch (error) {
+      console.log(error)
+    }
+
+    }
+  }
+
+
 export {
-  useGetData, useDelete, useUploadPic, useUploadDoc, useUpdateDoc
+  useGetData, useDelete, useUploadPic, useUploadDoc, useUpdateDoc, useDeleteSignlePhoto
 }
